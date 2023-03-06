@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Lab2
 {
-     enum Name
+    enum Name
     {
         KPI = 0,
         RedBodyKNU = 1,
@@ -26,8 +27,8 @@ namespace Lab2
         private List<PointF> vertices = new List<PointF>(); // Список координат точок
         private List<Tuple<int, int>> edges = new List<Tuple<int, int>>(); // Список ребер графа
         private List<Tuple<int, int>> directedEdges = new List<Tuple<int, int>>(); // Список орієнтованих ребер графа
-        
-        static List<(int node, float weight)>[] adjacencyList = new List<(int node, float weight)>[]  
+
+        static List<(int node, float weight)>[] adjacencyList = new List<(int node, float weight)>[]
             {
                 new List<(int node, float weight)> { (node: 1, weight: 4.6f) },
                 new List<(int node, float weight)> { (node: 0, weight: 4.6f),(node: 2, weight: 0.9f) },
@@ -41,7 +42,7 @@ namespace Lab2
                 new List<(int node, float weight)> { (node: 8, weight: 0.5f),(node: 10, weight: 1.1f) },
                 new List<(int node, float weight)> { (node: 9, weight: 1.1f) },
             };// Список суміжності де рядок - це визначні місця, стовпець - це місце до якого є сполучення та відстань до цього сполучення в кілометрах.
-        static int sourceNode = 0;
+        static int sourceNode = 0;// Вихідна точкаа
         public FormGraph()
         {
             InitializeComponent();
@@ -103,18 +104,28 @@ namespace Lab2
         }
         private void btnStart_Click(object sender, EventArgs e)
         {
+            Stopwatch clock = new Stopwatch();
+            clock.Start();
             DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm(adjacencyList, sourceNode);
             dijkstraAlgorithm.Run();
             float[] shortestDistances = dijkstraAlgorithm.GetShortestDistances();
+            clock.Stop();
             StringBuilder inTextBox = new StringBuilder();
 
-            for (int i = 1; i < shortestDistances.Length; i++)
+            for (int i = 0; i < shortestDistances.Length; i++)
             {
-                inTextBox.AppendLine($"Найкоротша відстань від ({1}){(Name)sourceNode} до ({i + 1}){(Name)i} = {shortestDistances[i]}");
+                if (sourceNode == i)
+                    continue;
+                else
+                {
+                    inTextBox.AppendLine($"Найкоротша відстань від ({sourceNode + 1}){(Name)sourceNode} до ({i + 1}){(Name)i} = {shortestDistances[i]}");
+                    inTextBox.AppendLine();
+                }
             }
+            inTextBox.AppendLine($"Витрачено часу на виконання програми: {clock.Elapsed}");
             textBox1.Text = inTextBox.ToString();
         }
-        private void textBox1_TextChanged(object sender, EventArgs e){ }
+        private void textBox1_TextChanged(object sender, EventArgs e) { }
     }
 }
 
