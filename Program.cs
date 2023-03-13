@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace Lab3
+namespace lab2
 {
     static class Program
     {

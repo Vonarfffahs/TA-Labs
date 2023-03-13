@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Lab3
+namespace lab2
 {
     public class DijkstraAlgorithm
     {

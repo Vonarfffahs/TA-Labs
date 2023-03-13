@@ -7,7 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Lab3
+namespace lab2
 {
      enum Name
     {
@@ -27,7 +27,6 @@ namespace Lab3
     {
         private List<PointF> vertices = new List<PointF>(); // Список координат точок
         private List<Tuple<int, int>> edges = new List<Tuple<int, int>>(); // Список ребер графа
-        private List<Tuple<int, int>> directedEdges = new List<Tuple<int, int>>(); // Список орієнтованих ребер графа
         static List<(int node, float weight)>[] adjacencyList = new List<(int node, float weight)>[]
             {
                 new List<(int node, float weight)> { (node: 1, weight: 4.60f) },
@@ -89,7 +88,7 @@ namespace Lab3
             Font boltFont = new Font(FontFamily.GenericSerif, 12, FontStyle.Bold);
             for (int i = 1; i <= vertices.Count; i++)
             {
-                graphics.DrawString(shortestDistances[i-1].ToString(), boltFont, color, vertices[i - 1].X + 8, vertices[i - 1].Y - 25);
+                graphics.DrawString(Math.Round(shortestDistances[i-1], 2, MidpointRounding.AwayFromZero).ToString(), boltFont, color, vertices[i - 1].X + 8, vertices[i - 1].Y - 25);
             } 
         }
         private void pictureBox_Paint(object sender, PaintEventArgs e)
@@ -101,13 +100,6 @@ namespace Lab3
             {
                 var point1 = vertices[edge.Item1];
                 var point2 = vertices[edge.Item2];
-                e.Graphics.DrawLine(pen, point1, point2);
-            }
-            foreach (var directedEdge in directedEdges)
-            {
-                var point1 = vertices[directedEdge.Item1];
-                var point2 = vertices[directedEdge.Item2];
-                pen.EndCap = LineCap.ArrowAnchor;
                 e.Graphics.DrawLine(pen, point1, point2);
             }
 
@@ -134,19 +126,7 @@ namespace Lab3
                         float[] shortestDistances = dijkstraAlgorithm.GetShortestDistances();
                         pictureBox_Paint(sender, e, shortestDistances, Brushes.HotPink);
                         List<int>[] shortestPaths = dijkstraAlgorithm.GetShortestPaths();
-                        StringBuilder inTextBox = new StringBuilder();
-                        for (int i = 0; i < shortestDistances.Length; i++)
-                        {
-                            if (sourceNode != i)
-                            {
-                                inTextBox.AppendLine($"Найкоротша відстань від ({sourceNode + 1}){(Name)sourceNode} до ({i + 1}){(Name)i} = {shortestDistances[i]}");
-                                inTextBox.AppendLine($"Найкоротший шлях від вузла ({sourceNode + 1}){(Name)sourceNode} до вузла ({i + 1}){(Name)i}: ");
-                                inTextBox.AppendLine($"({string.Join(" -> ", shortestPaths[i])})");
-                                inTextBox.AppendLine();
-                            }
-                        }
-                        inTextBox.AppendLine($"Витрачено часу на виконання програми: {clock.Elapsed}");
-                        textBox1.Text = inTextBox.ToString();
+                        OutputInTextBox(shortestDistances, shortestPaths, clock.Elapsed);
                         break;
                     }
                 case 1:
@@ -165,20 +145,7 @@ namespace Lab3
                         float[] shortestDistances = bellmanFordAlgorithm.GetShortestDistances();
                         pictureBox_Paint(sender, e, shortestDistances, Brushes.DeepPink);
                         List<int>[] shortestPaths = bellmanFordAlgorithm.GetShortestPaths();
-                        StringBuilder inTextBox = new StringBuilder();
-                        for (int i = 0; i < shortestDistances.Length; i++)
-                        {
-                            if (sourceNode != i)
-                            {
-                                inTextBox.AppendLine($"Найкоротша відстань від ({sourceNode + 1}){(Name)sourceNode} до ({i + 1}){(Name)i} = {shortestDistances[i]}");
-                                inTextBox.AppendLine($"Найкоротший шлях від вузла ({sourceNode + 1}){(Name)sourceNode} до вузла ({i + 1}){(Name)i}: ");
-                                inTextBox.AppendLine($"({string.Join(" -> ", shortestPaths[i])})");
-                                inTextBox.AppendLine();
-                            }
-                        }
-                        inTextBox.AppendLine($"Витрачено часу на виконання програми: {clock.Elapsed}");
-                        textBox1.Text = inTextBox.ToString();
-
+                        OutputInTextBox(shortestDistances, shortestPaths, clock.Elapsed);
                         break;
                     }
                 default:
@@ -189,6 +156,22 @@ namespace Lab3
         private void textBox1_TextChanged(object sender, EventArgs e){ }
         private void algorithmSelectionBox_SelectedIndexChanged(object sender, EventArgs e) { }
         private void FormGraph_Load(object sender, EventArgs e) { }
+        private void OutputInTextBox(float[] shortestDistances, List<int>[] shortestPaths,TimeSpan  clockElapsed)
+        {
+            StringBuilder inTextBox = new StringBuilder();
+            for (int i = 0; i < shortestDistances.Length; i++)
+            {
+                if (sourceNode != i)
+                {
+                    inTextBox.AppendLine($"Найкоротша відстань від ({sourceNode + 1}){(Name)sourceNode} до ({i + 1}){(Name)i} = {Math.Round(shortestDistances[i], 2, MidpointRounding.AwayFromZero)}");
+                    inTextBox.AppendLine($"Найкоротший шлях від вузла ({sourceNode + 1}){(Name)sourceNode} до вузла ({i + 1}){(Name)i}: ");
+                    inTextBox.AppendLine($"({string.Join(" -> ", shortestPaths[i])})");
+                    inTextBox.AppendLine();
+                }
+            }
+            inTextBox.AppendLine($"Витрачено часу на виконання програми: {clockElapsed}");
+            textBox1.Text = inTextBox.ToString();
+        }
     }
 }
 

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Lab3
+namespace lab2
 {
     public class BellmanFordAlgorithm
     {

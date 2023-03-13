@@ -1,4 +1,4 @@
-﻿namespace Lab3
+﻿namespace lab2
 {
     partial class FormGraph
     {
